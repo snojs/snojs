@@ -1,0 +1,2 @@
+# snojs
+Web apps simplified
