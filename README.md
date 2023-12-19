@@ -23,7 +23,7 @@ A lightweight JavaScript framework to add reactivity in a **_snap_**
 
 ## ## 3.51kb Build
 
-**sno** is as tiny as you need with only **177** lines of JS<br/>
+**sno** is as tiny as you need with only **195** lines of JS<br/>
 _Use less JavaScript write more HTML_
 
 ## ## Add sno to your project
