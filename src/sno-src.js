@@ -1,4 +1,4 @@
-let attr = ["if","else","click","bind","for","lint","mobile","computer"]
+let attr = ["if","else","click","bind","for","lint","mobile","computer","incl"]
 let reactors = [];
 let lints = [];
 let bounds = [];
@@ -41,7 +41,9 @@ function preRender(){
     			}
     			else if(q==7){
     				screenIfy(elmnt,"computer")
-    			}
+    			}else if(q==8){
+            incls(elmnt);
+          }
     		}
     	}
 	}
@@ -63,6 +65,20 @@ function createClickHandler(elmnt,type,file){
 	        console.log("Error with clicker():"+error)
 	    }
 	});
+}
+function incls(elmnt){
+  file = elmnt.getAttribute("incl");
+  if (file) {
+    xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4) {
+        if (this.status == 200) {elmnt.innerHTML = this.responseText;}
+      }
+    }      
+    xhttp.open("GET", file, true);
+    xhttp.send();
+    return;
+  }
 }
 function addReactiveState(elmnt,type,file){
 	reactors.push([elmnt,type,file])
