@@ -19,6 +19,7 @@ A lightweight JavaScript framework to add reactivity in a **_snap_**
 3. **click**
 4. **for**
 5. **lint**
+6. **incl**
 
 ## ## 3.51kb Build
 
