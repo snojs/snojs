@@ -1,6 +1,6 @@
 # [#](#sno) SnoJS Tutorial*
 
-snojs is a new lightweight JavaScript framework to add reactivity in a **snap**. 
+snojs is a new lightweight JavaScript framework to add reactivity in a ***snap***. 
 
 ## [##](Data) Setting your Data
 
