@@ -7,7 +7,7 @@ A lightweight JavaScript framework to add reactivity in a **_snap_**
 ```html
 <body data='{"counter":0}'>
   <button click="counter++;">Increment</button>
-  <p lint>Count is: {{counter}}</p>
+  <p react>Count is: {{counter}}</p>
   <script src="./sno.js"></script>
 </body>
 ```
@@ -15,15 +15,15 @@ A lightweight JavaScript framework to add reactivity in a **_snap_**
 ## ## With attributes like
 
 1. **data**
-2. **if** / **else**
+2. **if**
 3. **click**
 4. **for**
-5. **lint**
+5. **react**
 6. **incl**
 
-## ## 3.75kb Build
+## ## 4.38kb Build
 
-**sno** is as tiny as you need with only **195** lines of JS<br/>
+**sno** is as tiny as you need with only __300*__ lines of JS<br/>
 _Use less JavaScript write more HTML_
 
 ## ## Add sno to your project
