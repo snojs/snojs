@@ -1,195 +1,302 @@
-let attr = ["if","else","click","bind","for","lint","mobile","computer","incl"]
-let reactors = [];
-let lints = [];
-let bounds = [];
-let createdFors = [];
-let liveForHost = [];
-let screenWatch = [];
-let liveForClassStuff = []
-function jdat(){
-    var z, i, elmnt, file,jsonify;
-    z = document.getElementsByTagName("*");
-    for (i = 0; i < z.length; i++) {
-        elmnt = z[i];
-        file = elmnt.getAttribute("data");
-        if(file!=null){
-            jsonify = JSON.parse(file)
-            return jsonify;
-        }
-    }
-};let data = jdat()
-function preRender(){
-	var z, i, elmnt, file;
-    z = document.getElementsByTagName("*");
-	for (i = 0; i < z.length; i++){
-    	elmnt = z[i];
-    	for(let q=0; q<attr.length;q++){
-    		file = elmnt.getAttribute(attr[q]);
-    		if(file!=null){
-    			if(q==0||q==1){
-    				addReactiveState(elmnt,attr[q],file)
-    			}else if(q==2){
-    				createClickHandler(elmnt,attr[q],file)
-    			}else if (q==5){
-    				linter(elmnt,elmnt.innerText)
-    			}else if (q==3){
-    				binder(elmnt,file)
-    			}else if(q==4){
-    				createLiveFor(elmnt,file);
-    			}else if(q==6){
-    				screenIfy(elmnt,"mobile")
-    			}
-    			else if(q==7){
-    				screenIfy(elmnt,"computer")
-    			}else if(q==8){
-            incls(elmnt);
-          }
-    		}
-    	}
-	}
-};preRender();
-function createClickHandler(elmnt,type,file){
-	elmnt.Type = type; elmnt.File = file; elmnt.already = false
-	elmnt.addEventListener('click',function(evt){
-		try{
-	        for(let i = 0;i<Object.keys(data).length;i++){
-	            if(evt.currentTarget.File.includes(Object.keys(data)[i])){
-	                if(!evt.currentTarget.already){
-	                    evt.currentTarget.File = evt.currentTarget.File.replaceAll(Object.keys(data)[i],`data["${Object.keys(data)[i]}"]`)
-	                }
-	            }
-	        }
-	        evt.currentTarget.already=true;
-	        eval(evt.currentTarget.File);
-	    }catch (error){
-	        console.log("Error with clicker():"+error)
-	    }
-	});
-}
-function incls(elmnt){
-  file = elmnt.getAttribute("incl");
-  if (file) {
-    xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-      if (this.readyState == 4) {
-        if (this.status == 200) {elmnt.innerHTML = this.responseText;}
-      }
-    }      
-    xhttp.open("GET", file, true);
-    xhttp.send();
-    return;
-  }
-}
-function addReactiveState(elmnt,type,file){
-	reactors.push([elmnt,type,file])
+// SnoJS Snowstorm
+// inside exe usable functions
+function random(max) {
+  return Math.floor(Math.random() * max);
 }
 function toggle(name){
-	if(name){return false;}else{return true;}
+if(name){return false;}else{return true;}
 }
-function linter(elmnt,text){
-	lints.push([elmnt,text])
+let stored;
+function save(input){
+  stored = input;
 }
-function screenIfy(elmnt,type){
-	screenWatch.push([elmnt,type])
+function retrieve(){
+  return stored;
 }
-function binder(elmnt,file){
-	bounds.push([elmnt,file]);
+// Grab all html elements to parse later
+const getElms = () =>{
+var z;
+  var arr = []
+  z= document.getElementsByTagName("*");
+  for(i=0;i<z.length;i++){
+  arr.push(z[i]);
+  }
+  return arr;
+};
+const elements = getElms();
+
+// Mark the data tag and push jsonified vars to array
+const parseData = () =>{
+var hasDataTag, jsonified;
+  var possible = false;
+
+for(i=0;i<elements.length;i++){
+  hasDataTag = elements[i].getAttribute("data");
+    if(hasDataTag != null){
+      possible = true;
+    hasDataTag = JSON.parse(hasDataTag);
+      return hasDataTag;
+    }
+  }
+  if(!possible){
+    hasDataTag = '{"undefined":"undefined"}';
+    hasDataTag = JSON.parse(hasDataTag);
+    return hasDataTag;
+  }
+};
+const data = parseData();
+
+const parseScreen = () =>{
+  var hasEither;
+  var screens = [];
+  for(i=0;i<elements.length;i++){
+    hasEither = elements[i].getAttribute("computer");
+    // computer first mobile second
+    if(hasEither != null){
+      screens.push({elem:elements[i],attr:"computer"})
+    }else if(elements[i].getAttribute("mobile") != null){
+      screens.push({elem:elements[i],attr:"mobile"})
+    }
+  }
+  return screens;
+};
+const screens = parseScreen();
+const renderScreens = () =>{
+  for(i=0;i<screens.length;i++){
+    if(screens[i].attr == "mobile"){
+      if(window.innerWidth <= 600){
+        screens[i].elem.style.display="block";
+      }else{
+        screens[i].elem.style.display="none";
+      }
+    }    
+    if(screens[i].attr == "computer"){
+      if(window.innerWidth >= 600){
+        screens[i].elem.style.display="block";
+      }else{
+        screens[i].elem.style.display="none";
+      }
+    }
+  }
 }
-function createLiveFor(elmnt,file){
-	var key,para;
-	let childType = elmnt.getAttribute("item")
-	let childClasses = elmnt.getAttribute("item-class")
-	liveForClassStuff.push([childType,childClasses])
-	for(let q=0;q<Object.keys(data).length;q++){
-		if(file.includes(Object.keys(data)[q])){
-			createdFors.push([Object.keys(data)[q],[]])
-			length = createdFors.length
-			liveForHost.push([Object.keys(data)[q],elmnt])
-			key = Object.keys(data)[q]
-			for(let i=0;i<data[key].length;i++){
-				para = document.createElement(childType);
-				para.classList = childClasses;
-				para.innerText = data[key][i] 
-				elmnt.appendChild(para);
-				createdFors[length-1].push(para)
-			}
-		}
-	}
+
+const parseReval = () => {
+  var hasReval;
+  var revals = [];
+  for(i=0;i<elements.length;i++){
+    //check for reval attr
+    hasReval = elements[i].getAttribute("react")
+    if(hasReval != null){
+      revals.push({"elem":elements[i],"oldTxt":elements[i].innerHTML,"pre":"","post":""});
+    }else{
+      if(elements[i].getAttribute("lint") != null){
+        revals.push({"elem":elements[i],"oldTxt":elements[i].innerHTML,"pre":"","post":""});
+      }
+    }
+  }
+  return revals;
 }
+const reval = parseReval();
+
+const parseIf = () =>{
+var hasIf;
+  var ifs = [];
+  for(i=0;i<elements.length;i++){
+  // Check for React attr
+  hasIf = elements[i].getAttribute("if");
+    if(hasIf != null){
+    // Dont push data of React attr, only elem
+    ifs.push({"elem":elements[i],"attr":hasIf,"computed":undefined,"pre":"","post":""});
+    }
+  }
+  return ifs;
+};
+const ifs = parseIf();
+
+const parseClicker = () =>{
+  var hasClick;
+  var click = []
+  for(i=0;i<elements.length;i++){
+    // Check for the Click attr
+    hasClick = elements[i].getAttribute("click");
+    if(hasClick != null){
+      click.push(elements[i]);
+      // Add the click listener
+      elements[i].addEventListener('click', function(evt){
+        // take the data of hasClick to the function
+        var bringClick = evt.currentTarget.getAttribute("click")
+        var already = false;
+        try{
+       for(let i = 0;i<Object.keys(data).length;i++){
+           if(bringClick.includes(Object.keys(data)[i])){
+               if(!already){
+                   bringClick = bringClick.replaceAll(Object.keys(data)[i],`data["${Object.keys(data)[i]}"]`)
+               }
+           }
+       }
+       already=true;
+       eval(bringClick);
+   }catch (error){
+       alert("Error with clicker():"+error)
+   }
+      })
+    }
+  }
+  return click;
+};
+let click = parseClicker();
+
+const exc = () => {
+  var hasExc;
+  for(i=0;i<elements.length;i++){
+    hasExc = elements[i].getAttribute("exc");
+    if(hasExc != null){
+      for(q=0;q<Object.keys(data).length;q++){
+        if(hasExc.includes(Object.keys(data)[q])){
+          hasExc = hasExc.replace(Object.keys(data)[q], `data[Object.keys(data)[${q}]]`);
+        }
+      }
+      eval(hasExc)
+    }
+  }
+};exc();
+
+const renderReval = () =>{
+  // reval checker basically react + something, similar to the react components + string manipulation
+ if(reval.length > 0){
+    // Cycle through each Reval
+    for(i=0;i<reval.length;i++){
+      // Check for and replace every variable instance
+      // True text is the version with var turned into data[Object.keys(data)[index]]
+      let trueTxt = reval[i].oldTxt;
+      for(q=0;q<Object.keys(data).length;q++){
+        if(trueTxt.includes(Object.keys(data)[q])){
+          trueTxt = trueTxt.replace(Object.keys(data)[q],`data[Object.keys(data)[${q}]]`);
+        }
+      }
+      let pre = trueTxt.split("{");
+      let post = trueTxt.split("}");
+      reval[i].pre = pre[0]
+      reval[i].post = post[post.length-1]
+      trueTxt = pre[pre.length-1].split("}")[0];
+      // Now that that mess is joever lets actually show the vars
+      reval[i].elem.innerHTML = pre[0]+eval(trueTxt)+post[post.length-1]
+    }
+  }
+}
+const renderIfs = () =>{
+  // If reactor
+  if(ifs.length > 0){
+    // loop both the object and the ifs to check for equality
+    for(i=0;i<ifs.length;i++){
+      // replace stuff
+      let trueAttr = ifs[i].attr
+      for(q=0;q<Object.keys(data).length;q++){
+        if(trueAttr.includes(Object.keys(data)[q])){
+          trueAttr = trueAttr.replace(Object.keys(data)[q],`data[Object.keys(data)[${q}]]`);
+        }
+      }
+      if(eval(trueAttr)){
+        ifs[i].elem.style.display = "";
+      }else{
+        ifs[i].elem.style.display = "none";
+      }
+    }
+  }
+}
+const allowInclReturn = (elem,hasIncl) =>{
+  // This function only exists because when i return the other one it doesnt allow more than 1 incl
+  xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4) {
+      if (this.status == 200) {elem.innerHTML = this.responseText;}
+    }
+  }      
+  xhttp.open("GET", hasIncl, true);
+  xhttp.send();
+  return;
+}
+const parseIncl = () =>{
+
+  let hasIncl;
+  for(i=0;i<elements.length;i++){
+    hasIncl = elements[i].getAttribute("incl");
+    elem = elements[i]
+
+    if(hasIncl != null){
+      allowInclReturn(elem,hasIncl);
+    }
+  }
+};parseIncl();
+
+
+const parseBind = () =>{
+  let hasBind;
+  let binds = []
+
+  for(i=0;i<elements.length;i++){
+    hasBind = elements[i].getAttribute("bind")
+    if(hasBind!=null){
+      for(q=0;q<Object.keys(data).length;q++){
+        if(hasBind.includes(Object.keys(data)[q])){
+          binds.push({elem:elements[i],attr:hasBind})
+        }
+      }
+    }
+  }
+  return binds;
+};
+const bound = parseBind();
+const renderBinds = () =>{
+  let fix;
+  for(i=0;i<bound.length;i++){
+    fix = bound[i].attr;
+    data[fix] = bound[i].elem.value;
+    
+  }
+};renderBinds();
+
+const parseFors = () =>{
+  let hasFor;
+  let fors = [];
+
+  for(i=0;i<elements.length;i++){
+    hasFor = elements[i].getAttribute("for");
+    if(hasFor != null){
+      // Pushed each element that has the for="" attribute attached then sends it off too renderFors
+      fors.push({elem:elements[i],attr:hasFor})
+    }
+  }
+  return fors;
+};
+const fors = parseFors();
+
+const renderFors = () =>{
+  let rendered = []
+  for(i=0;i<fors.length;i++){
+    // clears every container from any previous children
+    fors[i].elem.innerHTML = ''
+    // create an item for each item in the array based on whats in the for attr
+    let newItem;
+    let itemClass = fors[i].elem.getAttribute("item-class");
+    let itemType = fors[i].elem.getAttribute("item");
+    // arr just shows the actually array name;
+    let arr = fors[i].attr; // always use data[arr] not just arr
+    for(q=0;q<data[arr].length;q++){
+      newItem = document.createElement(itemType);
+      newItem.classList = itemClass;
+      newItem.innerHTML = data[arr][q];
+      fors[i].elem.appendChild(newItem)
+    }
+  }
+};
+
 window.main = function(){
-	requestAnimationFrame( main );
-	if(reactors.length!=0){
-		for(let i = 0; i<reactors.length;i++){
-			for(let q = 0; q<Object.keys(data).length;q++){
-				if(reactors[i][2] == Object.keys(data)[q]){
-					if(reactors[i][1]=="if"){
-						if(Object.values(data)[q]==true){
-							reactors[i][0].style.display = "block"
-						}else if(Object.values(data)[q]==false){
-							reactors[i][0].style.display = "none"
-						}
-					}
-					else if(reactors[i][1]=="else"){
-						if(Object.values(data)[q]==true){
-							reactors[i][0].style.display = "none"
-						}else if(Object.values(data)[q]==false){
-							reactors[i][0].style.display = "block"
-						}
-					}
-				}
-			}
-		}
-	}
-	if(lints.length !=0){
-		for(let q=0;q<Object.keys(data).length;q++){
-			for(let i=0;i<lints.length;i++){
-				if(lints[i][1].includes(`{{${Object.keys(data)[q]}}}`)){
-					lints[i][0].innerText = lints[i][1].replace(`{{${Object.keys(data)[q]}}}`,Object.values(data)[q])
-				}
-			}
-		}
-	}
-	if(bounds.length !=0){
-		for(let q=0;q<Object.keys(data).length;q++){
-			for(let i=0;i<bounds.length;i++){
-				if(bounds[i][1].includes(Object.keys(data)[q])){
-					data[Object.keys(data)[q]] = bounds[i][0].value
-				}
-			}
-		}
-	}
-	if(liveForHost.length !=0){
-		var alreadyCreated,arrayHolding,para;
-		for(let i=0;i<liveForHost.length;i++){
-			if(liveForHost[i][0]==createdFors[i][0]){
-				alreadyCreated= createdFors[i].length
-				arrayHolding= data[liveForHost[i][0]].length
-				if(arrayHolding!=(parseInt(alreadyCreated)-2)){
-					para= document.createElement(liveForClassStuff[i][0])
-					para.classList = liveForClassStuff[i][1];
-					para.innerText = data[liveForHost[i][0]][data[liveForHost[i][0]].length-1]
-					liveForHost[i][1].appendChild(para);
-					createdFors[i].push(para)
-				}
-			}
-		}
-	}
-	if(screenWatch.length!=0){
-		for(let i=0;i<screenWatch.length;i++){
-			if(screenWatch[i][1]=="mobile"){
-				if(window.innerWidth <= 600){
-					screenWatch[i][0].style.display="block"
-				}else{
-					screenWatch[i][0].style.display="none"
-				}
-			}
-			if(screenWatch[i][1]=="computer"){
-				if(window.innerWidth <= 600){
-					screenWatch[i][0].style.display="none"
-				}else{
-					screenWatch[i][0].style.display="block"
-				}
-			}
-		}
-	}
+requestAnimationFrame( main );
+ 
+  renderReval();
+  renderIfs();
+  renderBinds();
+  renderFors();
+  renderScreens();
 };main();
