@@ -5,11 +5,16 @@
 A lightweight JavaScript framework to add reactivity in a **_snap_**
 
 ```html
-<body data='{"counter":0}'>
-  <button click="counter++;">Increment</button>
-  <p react>Count is: {{counter}}</p>
-  <script src="./sno.js"></script>
-</body>
+<div data='{"count":1,"update":""}'>
+  <span exc='update = setInterval(function(){count++;},100)'></span>
+  <p react>
+    {{count}}
+  </p><br/>
+  <button click="clearInterval(update)">
+    Stop
+  </button>
+</div>
+<script src="./sno.js"></script>
 ```
 
 ## ## With attributes like
