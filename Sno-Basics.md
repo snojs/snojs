@@ -1,67 +1,75 @@
-# [#](#sno) SnoJS Tutorial*
+# [#](#lrn) Learn SnoJS
 
-snojs is a new lightweight JavaScript framework to add reactivity in a ***snap***. 
+> Based of SnoJS v2 Snostorm
 
-## [##](Data) Setting your Data
+### [##](#bsic) Basic Reactivity
 
-1. All of your variables are declared on your `<body>` tag. 
-2. Add the attribute `data=''` inside your body tag start
-3. It should look something like this (btw the use of single quotes is important)
+> The Data and React tag
+
+The Data tag __always__ is in single quotes ' ' with variable names in double quotes " ".<br/>
+It is best practice to place the data tag on the `<body>` element.<br/>
+Lets make a variable named `count` and set it to `1`
+
 ```html
-<body data=''>
+<body data='{"count":1}'>
+	<!-- More Here Later -->
+</body>
 ```
-4. Now to actually declare some variables!
-5. inside your data tag you can add `{}` inside the curly brackets is where your variable go. 
-6. *Your variable names will always be a string* 
-7. Lets set a variable called show that's false
+How do we show this variable in the html?<br/>
+With the `react` tag and double brackets
+
 ```html
-<body data='{"show":false}'>
+<body data='{"count":1}'>
+	<p react>
+		Count is:{{count}}!!
+    </p>
+</body>
 ```
-8. ⭐ Congrats you successfully wrote a variable!
-9.  *Variables work as array boolean int string etc.*
-
-## [##](#Info) Basic Info   
-
-1. click, if, and else all are able to take full arguments such as...
+SnoJS will parse this and output `Count is: 1!!`. <br/>
+You can use any valid JavaScript within the double brackets. For example...
 ```html
-<p if="count==1">Count is 1</p>
-<button click='alert("Hi!");'>Say Hi</button>
-```
-2. When writing a for loop you need 3 attributes
-a. for="(arr to loop over)" 
-b. item="(what to create items as)"
-c. item-class="(how to style the items)"
-3. Use single quotes `''` when your attribute needs to use double quotes `""`
-```html
-<button click='alert("Clicked");'>Click Me!<button>
-```
+<p react>
+	Pi+1: {{Math.PI+1}}
+</p>
+``` 
+__Do not put a child element that uses sno attributes within a element with a react tag.__
 
-## [##](#todo) A basic Todo app
+### [##](#todo) Lets make a Todo app
 
-1.  Create 2 variables one as an array the other a string.
+>  The For, Bind, Click, Item, and Item-class tag
+
+Start with the basic SnoJS scaffold and make two variables. an array and a string.  add a ordered list and a text input and submit button
 ```html
 <body data='{"arr":[],"val":""}'>
+	<input type="text"/>
+	<button>Add Todo</button>
+	<ol></ol>
+</body>
 ```
-2. Add a input tag and bind the data to your string variable
-```html
-<input placeholder="Add Todo" type="text" bind="val"/>
-```
-3. Crete a button to push the input value to your array onclick
-```html
-<button click='arr.push(val)'>Add Todo!</button>
-```
-4. Create a ordered list to loop through your array
-```html
-<ol for="arr" item="li" item-class=""></ol>
-```
-5. ⭐ Congrats you made a todo app!
 
-*Full Code*
+Now we have to connect the users input to the variable val<br/>
+To do this we do 
 ```html
-<body data='{"arr":[],"val":""}'>
-  <input placeholder="Add Todo" type="text" bind="val"/>
-  <button click='arr.push(val)'>Add Todo!</button>
-  <ol for="arr" item="li" item-class=""></ol>
-  <script src="./sno-min.js"></script>
+<input type="text" bind="val"/>
+```
+Next push the value of val to the array on button click
+```html
+ <button click="arr.push(val);">Add Todo</button>
+```
+__The click attribute takes any valid JS__<br/>
+Next cycle through the items in arr and output them as list items
+```html
+<ol for="arr" item="li" item-class="item"></ol>
+```
+Now the full code
+
+```html
+<body data='
+	"arr":[],
+	"val:""
+'>
+	<input type="text" bind="val"/>
+	<button click="arr.push(val);">Add Todo</button>
+	<ol for="arr" item="li" item-class="item"></ol>
 </body>
 ```
