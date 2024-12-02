@@ -1,20 +1,21 @@
 # # snojs *
 
-> More with Less
+> Building the web [your way](#your)
+>
+> _v3 snoflake_
 
 A lightweight JavaScript framework to add reactivity in a **_snap_**
 
 ```html
 <div data='{"count":1,"update":""}'>
-  <span exc='update = setInterval(function(){count++;},100)'></span>
+  <span exc='update = setInterval(function(){$("count++")},100)'></span>
   <p react>
     {{count}}
   </p><br/>
-  <button click="clearInterval(update)">
+  <button onclick="$('clearInterval(update)')">
     Stop
   </button>
 </div>
-<script src="./sno.js"></script>
 ```
 
 ## ## With attributes like
@@ -27,9 +28,9 @@ A lightweight JavaScript framework to add reactivity in a **_snap_**
 6. **incl**
 7. **exc**
 
-## ## 4.38kb Build
+## ## 4.04kb Build
 
-**sno** is as tiny as you need with only __300*__ lines of JS<br/>
+**sno** is as tiny as you need with less than __300*__ lines of JS<br/>
 _Use less JavaScript write more HTML_
 
 ## ## Add sno to your project
