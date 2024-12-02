@@ -265,7 +265,7 @@ const $ = (change) =>{
   // this is the new click and in script tag modification function
   for(let i=0;i<Object.keys(data).length;i++){
     if(update.includes(Object.keys(data)[i])){
-      update = update.replace(Object.keys(data)[i],`data.${Object.keys(data)[i]}`);
+      update = update.replaceAll(Object.keys(data)[i],`data.${Object.keys(data)[i]}`);
     }
   }
   eval(update);
